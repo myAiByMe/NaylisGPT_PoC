@@ -77,7 +77,7 @@ CONFIG = {
     'rel_rank'              : 32,
     'use_graph'             : ARGS.use_graph,   # True → Naylis attn | False → GPT classique
     # Training
-    'batch_size'            : 210,
+    'batch_size'            : 220,
     'gradient_accumulation' : 1,
     'max_grad_norm'         : 1.0,
     'learning_rate'         : 3e-4,
@@ -86,7 +86,7 @@ CONFIG = {
     'adam_beta2'            : 0.95,
     'adam_eps'              : 1e-8,
     # Data
-    'data_file'             : './data/pretrain_data_3B.bin',
+    'data_file'             : './data/pretrain_data.bin',
     'val_tokens'            : 10_000_000,
     'warmup_ratio'          : 0.03,
     'decay_ratio'           : 0.15,
