@@ -112,7 +112,7 @@ TASK_MAP_SFT = {
     "sciq"           : ("sciq",             0),
     "copa"           : ("copa",             0),
     "race"           : ("race",             0),
-    "social_iqa"     : ("social_iqa",       0),
+    "commonsense_qa"  : ("commonsense_qa",   0),   # raisonnement social/commonsense 5-way MC
 }
 
 TASK_MAP_PRETRAIN = {
@@ -131,7 +131,7 @@ TASK_MAP_PRETRAIN = {
     "sciq"           : ("sciq",             0),   # science QA
     "copa"           : ("copa",             0),   # causalité commonsense
     "race"           : ("race",             0),   # compréhension de lecture
-    "social_iqa"     : ("social_iqa",       0),   # social interaction QA
+    "commonsense_qa"  : ("commonsense_qa",   0),   # raisonnement social/commonsense 5-way MC   # social interaction QA
 }
 
 # TASKS_ALL liste les bonnes tâches selon le mode
@@ -153,7 +153,7 @@ RANDOM_BASELINES = {
     "sciq"           : 0.25,   # 4-way MC
     "copa"           : 0.50,   # 2-way (cause/effect)
     "race"           : 0.25,   # 4-way MC
-    "social_iqa"           : 0.33,   # 3-way MC
+    "commonsense_qa"        : 0.20,   # 5-way MC
 }
 
 # ─────────────────────────────────────────────────────────────
