@@ -77,7 +77,7 @@ CONFIG = {
     'rel_rank'              : 16,
     'use_graph'             : ARGS.use_graph,   # True → Naylis attn | False → GPT classique
     # Training
-    'batch_size'            : 128,
+    'batch_size'            : 170,
     'gradient_accumulation' : 1,
     'max_grad_norm'         : 1.0,
     'learning_rate'         : 3e-4,
@@ -86,7 +86,7 @@ CONFIG = {
     'adam_beta2'            : 0.95,
     'adam_eps'              : 1e-8,
     # Data
-    'data_file'             : './data/pretrain_data.bin',
+    'data_file'             : './data/pretrain_data_5B.bin',
     'val_tokens'            : 10_000_000,
     'warmup_ratio'          : 0.03,
     'decay_ratio'           : 0.15,
@@ -164,6 +164,7 @@ class LivePlot:
     """
     def __init__(self, path: str, total_steps: int, use_graph: bool = True):
         self.path         = path
+        self.history_path = path.replace('.png', '_plot_history.json')
         self.total_steps  = total_steps
         self.use_graph    = use_graph
         self.train_steps  : list[int]   = []
@@ -173,6 +174,25 @@ class LivePlot:
         self.gs_steps     : list[int]   = []
         self.gs_values    : list[float] = []
         os.makedirs(os.path.dirname(path) or '.', exist_ok=True)
+
+    def load_history(self):
+        """Charge l'historique depuis le JSON (reprise de checkpoint)."""
+        if not os.path.exists(self.history_path):
+            return
+        try:
+            with open(self.history_path, 'r') as f:
+                h = json.load(f)
+            self.train_steps  = h.get('train_steps',  [])
+            self.train_losses = h.get('train_losses', [])
+            self.val_steps    = h.get('val_steps',    [])
+            self.val_losses   = h.get('val_losses',   [])
+            self.gs_steps     = h.get('gs_steps',     [])
+            self.gs_values    = h.get('gs_values',    [])
+            n_train = len(self.train_steps)
+            n_val   = len(self.val_steps)
+            print(f'  Historique plot chargé : {n_train} points train, {n_val} points val')
+        except Exception as e:
+            print(f"  ⚠️  Impossible de charger l'historique plot : {e}")
 
     def add_train(self, step: int, loss: float):
         self.train_steps.append(step)
@@ -285,6 +305,21 @@ class LivePlot:
         plt.savefig(self.path, dpi=130, bbox_inches='tight',
                     facecolor=fig.get_facecolor())
         plt.close(fig)
+
+        # Sauvegarde de l'historique pour reprise
+        _h = {
+            'train_steps' : self.train_steps,
+            'train_losses': self.train_losses,
+            'val_steps'   : self.val_steps,
+            'val_losses'  : self.val_losses,
+            'gs_steps'    : self.gs_steps,
+            'gs_values'   : self.gs_values,
+        }
+        try:
+            with open(self.history_path, 'w') as _f:
+                json.dump(_h, _f)
+        except Exception:
+            pass
 
 
 # -- WSD Scheduler --------------------------------------------------------------
@@ -809,6 +844,7 @@ def main():
         global_step = cp.get('global_step', 0)
         total_time  = cp.get('total_training_time', 0.0)
         start_step  = cp.get('start_step', 0)
+        plot.load_history()
         if global_step >= TOTAL_STEPS:
             print('Training deja termine.')
             return
