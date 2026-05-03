@@ -47,7 +47,7 @@ def get_args():
     # use_graph : True  → Naylis Attention (biais graphe asymétrique)
     #             False → GPT classique    (aucun projecteur relationnel)
     g = p.add_mutually_exclusive_group()
-    g.add_argument('--use-graph',    dest='use_graph', action='store_true',  default=True,
+    g.add_argument('--use-graph',    dest='use_graph', action='store_true',  default=False,
                    help='Activer Naylis Attention (défaut)')
     g.add_argument('--no-use-graph', dest='use_graph', action='store_false',
                    help='Désactiver Naylis Attention → GPT classique')
